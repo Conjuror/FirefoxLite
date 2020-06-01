@@ -14,9 +14,14 @@ SIZE_LIMIT = 6.0 * 1024 * 1024 + AC_SYS_ENGINE
 parser = argparse.ArgumentParser(description='Determine Path')
 parser.add_argument('product', choices=['focus', 'preview'], default='focus')
 parser.add_argument('engine', choices=['webkit'], default='webkit')
+parser.add_argument('--bitrise', dest='bitrise',action='store_true')
+parser.set_defaults(bitrise=False)
 args = parser.parse_args()
 FLAVOR = args.product + args.engine.capitalize()
-PATH = path.join(path.dirname(path.abspath(__file__)), '../../app/build/outputs/apk/' + FLAVOR + '/release')
+if args.bitrise:
+    PATH = '/bitrise/deploy/'
+else:
+    PATH = path.join(path.dirname(path.abspath(__file__)), '../../app/build/outputs/apk/' + FLAVOR + '/release')
 
 files = []
 try:
@@ -36,5 +41,5 @@ for apk_file in files:
         ))
         exit(27)
     print(" * [OKAY] {filename} ({filesize} <= {sizelimit})".format(
-            filename=apk_file, filesize=file_size, sizelimit=SIZE_LIMIT
-        ))
+        filename=apk_file, filesize=file_size, sizelimit=SIZE_LIMIT
+    ))
